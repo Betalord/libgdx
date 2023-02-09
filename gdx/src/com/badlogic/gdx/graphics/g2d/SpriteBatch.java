@@ -30,6 +30,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 
 import java.nio.Buffer;
+import java.util.Stack;
 
 /** Draws batched quads using indices.
  * @see Batch
@@ -58,6 +59,8 @@ public class SpriteBatch implements Batch {
 	private int blendDstFunc = GL20.GL_ONE_MINUS_SRC_ALPHA;
 	private int blendSrcFuncAlpha = GL20.GL_SRC_ALPHA;
 	private int blendDstFuncAlpha = GL20.GL_ONE_MINUS_SRC_ALPHA;
+	/** For each backup call, it will store 4 ints: sRGB, dRGB, sA, dA. */
+	private Stack<Integer> blendFuncBackup = new Stack<Integer>();
 
 	private final ShaderProgram shader;
 	private ShaderProgram customShader = null;
@@ -1019,6 +1022,25 @@ public class SpriteBatch implements Batch {
 	@Override
 	public int getBlendDstFuncAlpha () {
 		return blendDstFuncAlpha;
+	}
+
+	public void backupBlendFunction () {
+		// we must put blending function on the stack in reverse order (so when we restore them, the order will be correct):
+		blendFuncBackup.push(blendDstFuncAlpha); // dA
+		blendFuncBackup.push(blendSrcFuncAlpha); // sA
+		blendFuncBackup.push(blendDstFunc); // dRGB
+		blendFuncBackup.push(blendSrcFunc); // sRGB
+	}
+
+	public void restoreBlendFunction () {
+		/*
+		 * Correct order:
+		 * sRGB
+		 * dRGB
+		 * sA
+		 * dA
+		 */
+		setBlendFunctionSeparate(blendFuncBackup.pop(), blendFuncBackup.pop(), blendFuncBackup.pop(), blendFuncBackup.pop());
 	}
 
 	@Override

@@ -1095,6 +1095,11 @@ public class SpriteBatch implements Batch {
 		return customShader;
 	}
 
+	/** Returns custom shader if set, or null otherwise. */
+	public ShaderProgram getCustomShader() {
+		return customShader;
+	}
+
 	@Override
 	public boolean isBlendingEnabled () {
 		return !blendingDisabled;

@@ -41,6 +41,9 @@ public class SpriteBatch implements Batch {
 	 *             used when gles 3 is not available, defaults to {@link VertexDataType#VertexArray}. */
 	@Deprecated public static VertexDataType defaultVertexDataType = VertexDataType.VertexArray;
 
+	public static final int DEFAULT_BLEND_SRC_FUNCTION = GL20.GL_SRC_ALPHA;
+	public static final int DEFAULT_BLEND_DST_FUNCTION = GL20.GL_ONE_MINUS_SRC_ALPHA;
+
 	private Mesh mesh;
 
 	final float[] vertices;
@@ -55,10 +58,10 @@ public class SpriteBatch implements Batch {
 	private final Matrix4 combinedMatrix = new Matrix4();
 
 	private boolean blendingDisabled = false;
-	private int blendSrcFunc = GL20.GL_SRC_ALPHA;
-	private int blendDstFunc = GL20.GL_ONE_MINUS_SRC_ALPHA;
-	private int blendSrcFuncAlpha = GL20.GL_SRC_ALPHA;
-	private int blendDstFuncAlpha = GL20.GL_ONE_MINUS_SRC_ALPHA;
+	private int blendSrcFunc = DEFAULT_BLEND_SRC_FUNCTION;
+	private int blendDstFunc = DEFAULT_BLEND_DST_FUNCTION;
+	private int blendSrcFuncAlpha = DEFAULT_BLEND_SRC_FUNCTION;
+	private int blendDstFuncAlpha = DEFAULT_BLEND_DST_FUNCTION;
 	/** For each backup call, it will store 4 ints: sRGB, dRGB, sA, dA. */
 	private Stack<Integer> blendFuncBackup = new Stack<Integer>();
 
@@ -1002,6 +1005,10 @@ public class SpriteBatch implements Batch {
 		blendDstFunc = dstFuncColor;
 		blendSrcFuncAlpha = srcFuncAlpha;
 		blendDstFuncAlpha = dstFuncAlpha;
+	}
+
+	public void setDefaultBlendFunction () {
+		setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	@Override

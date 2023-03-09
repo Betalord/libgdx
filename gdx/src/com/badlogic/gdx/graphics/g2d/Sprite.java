@@ -22,7 +22,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.NumberUtils;
 
 /** Holds the geometry, color, and texture information for drawing 2D sprites using {@link Batch}. A Sprite has a position and a
  * size given as width and height. The position is relative to the origin of the coordinate system specified via
@@ -77,8 +76,8 @@ public class Sprite extends TextureRegion {
 	}
 
 	// Note the region is copied.
-	/** Creates a sprite based on a specific TextureRegion, the new sprite's region is a copy of the parameter region - altering one
-	 * does not affect the other */
+	/** Creates a sprite based on a specific TextureRegion, the new sprite's region is a copy of the parameter region - altering
+	 * one does not affect the other */
 	public Sprite (TextureRegion region) {
 		setRegion(region);
 		setColor(1, 1, 1, 1);
@@ -214,13 +213,13 @@ public class Sprite extends TextureRegion {
 		vertices[Y4] = y;
 	}
 
-	/** Sets the position where the sprite will be drawn, relative to its current origin.  */
+	/** Sets the position where the sprite will be drawn, relative to its current origin. */
 	public void setOriginBasedPosition (float x, float y) {
 		setPosition(x - this.originX, y - this.originY);
 	}
 
-	/** Sets the x position where the sprite will be drawn. If origin, rotation, or scale are changed, it is slightly more efficient
-	 * to set the position after those operations. If both position and size are to be changed, it is better to use
+	/** Sets the x position where the sprite will be drawn. If origin, rotation, or scale are changed, it is slightly more
+	 * efficient to set the position after those operations. If both position and size are to be changed, it is better to use
 	 * {@link #setBounds(float, float, float, float)}. */
 	public void setX (float x) {
 		this.x = x;
@@ -239,8 +238,8 @@ public class Sprite extends TextureRegion {
 		vertices[X4] = x2;
 	}
 
-	/** Sets the y position where the sprite will be drawn. If origin, rotation, or scale are changed, it is slightly more efficient
-	 * to set the position after those operations. If both position and size are to be changed, it is better to use
+	/** Sets the y position where the sprite will be drawn. If origin, rotation, or scale are changed, it is slightly more
+	 * efficient to set the position after those operations. If both position and size are to be changed, it is better to use
 	 * {@link #setBounds(float, float, float, float)}. */
 	public void setY (float y) {
 		this.y = y;
@@ -258,7 +257,7 @@ public class Sprite extends TextureRegion {
 		vertices[Y3] = y2;
 		vertices[Y4] = y;
 	}
-	
+
 	/** Sets the x position so that it is centered on the given x parameter */
 	public void setCenterX (float x) {
 		setX(x - width / 2);
@@ -388,7 +387,7 @@ public class Sprite extends TextureRegion {
 	}
 
 	/** Place origin in the center of the sprite */
-	public void setOriginCenter() {
+	public void setOriginCenter () {
 		this.originX = width / 2;
 		this.originY = height / 2;
 		dirty = true;
@@ -453,8 +452,8 @@ public class Sprite extends TextureRegion {
 		dirty = true;
 	}
 
-	/** Sets the sprite's scale for both X and Y. The sprite scales out from the origin. This will not affect the values returned by
-	 * {@link #getWidth()} and {@link #getHeight()} */
+	/** Sets the sprite's scale for both X and Y. The sprite scales out from the origin. This will not affect the values returned
+	 * by {@link #getWidth()} and {@link #getHeight()} */
 	public void setScale (float scaleX, float scaleY) {
 		this.scaleX = scaleX;
 		this.scaleY = scaleY;
@@ -539,8 +538,8 @@ public class Sprite extends TextureRegion {
 		return vertices;
 	}
 
-	/** Returns the bounding axis aligned {@link Rectangle} that bounds this sprite. The rectangles x and y coordinates describe its
-	 * bottom left corner. If you change the position or size of the sprite, you have to fetch the triangle again for it to be
+	/** Returns the bounding axis aligned {@link Rectangle} that bounds this sprite. The rectangles x and y coordinates describe
+	 * its bottom left corner. If you change the position or size of the sprite, you have to fetch the triangle again for it to be
 	 * recomputed.
 	 * 
 	 * @return the bounding Rectangle */
@@ -605,14 +604,14 @@ public class Sprite extends TextureRegion {
 		return height;
 	}
 
-	/** The origin influences {@link #setPosition(float, float)}, {@link #setRotation(float)} and the expansion direction of scaling
-	 * {@link #setScale(float, float)} */
+	/** The origin influences {@link #setPosition(float, float)}, {@link #setRotation(float)} and the expansion direction of
+	 * scaling {@link #setScale(float, float)} */
 	public float getOriginX () {
 		return originX;
 	}
 
-	/** The origin influences {@link #setPosition(float, float)}, {@link #setRotation(float)} and the expansion direction of scaling
-	 * {@link #setScale(float, float)} */
+	/** The origin influences {@link #setPosition(float, float)}, {@link #setRotation(float)} and the expansion direction of
+	 * scaling {@link #setScale(float, float)} */
 	public float getOriginY () {
 		return originY;
 	}
@@ -630,12 +629,6 @@ public class Sprite extends TextureRegion {
 	/** Returns the color of this sprite. If the returned instance is manipulated, {@link #setColor(Color)} must be called
 	 * afterward. */
 	public Color getColor () {
-		int intBits = NumberUtils.floatToIntColor(vertices[C1]);
-		Color color = this.color;
-		color.r = (intBits & 0xff) / 255f;
-		color.g = ((intBits >>> 8) & 0xff) / 255f;
-		color.b = ((intBits >>> 16) & 0xff) / 255f;
-		color.a = ((intBits >>> 24) & 0xff) / 255f;
 		return color;
 	}
 

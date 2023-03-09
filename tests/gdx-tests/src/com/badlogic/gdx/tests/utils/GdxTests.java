@@ -38,6 +38,7 @@ import java.util.List;
 
 import com.badlogic.gdx.tests.*;
 import com.badlogic.gdx.tests.bench.TiledMapBench;
+import com.badlogic.gdx.tests.conformance.AudioSoundAndMusicIsolationTest;
 import com.badlogic.gdx.tests.conformance.DisplayModeTest;
 import com.badlogic.gdx.tests.examples.MoveSpriteExample;
 import com.badlogic.gdx.tests.extensions.FreeTypeAtlasTest;
@@ -48,6 +49,7 @@ import com.badlogic.gdx.tests.extensions.FreeTypeMetricsTest;
 import com.badlogic.gdx.tests.extensions.FreeTypePackTest;
 import com.badlogic.gdx.tests.extensions.FreeTypeTest;
 import com.badlogic.gdx.tests.extensions.InternationalFontsTest;
+import com.badlogic.gdx.tests.math.OctreeTest;
 import com.badlogic.gdx.tests.g3d.Animation3DTest;
 import com.badlogic.gdx.tests.g3d.AnisotropyTest;
 import com.badlogic.gdx.tests.g3d.Basic3DSceneTest;
@@ -76,6 +78,7 @@ import com.badlogic.gdx.tests.g3d.TextureRegion3DTest;
 import com.badlogic.gdx.tests.g3d.utils.DefaultTextureBinderTest;
 import com.badlogic.gdx.tests.gles2.HelloTriangle;
 import com.badlogic.gdx.tests.gles2.SimpleVertexShader;
+import com.badlogic.gdx.tests.gles2.VertexArrayTest;
 import com.badlogic.gdx.tests.gles3.InstancedRenderingTest;
 import com.badlogic.gdx.tests.gles3.PixelBufferObjectTest;
 import com.badlogic.gdx.tests.net.NetAPITest;
@@ -103,6 +106,7 @@ public class GdxTests {
 		AtlasIssueTest.class,
 		AudioDeviceTest.class,
 		AudioRecorderTest.class,
+		AudioSoundAndMusicIsolationTest.class,
 		Basic3DSceneTest.class,
 		Basic3DTest.class,
 		Benchmark3DTest.class,
@@ -182,6 +186,7 @@ public class GdxTests {
 		MatrixJNITest.class,
 		MeshBuilderTest.class,
 		MeshShaderTest.class,
+		MeshWithCustomAttributesTest.class,
 		MipMapTest.class,
 		ModelTest.class,
 		ModelCacheTest.class,
@@ -193,6 +198,7 @@ public class GdxTests {
 		NinePatchTest.class,
 		NoncontinuousRenderingTest.class,
 		OnscreenKeyboardTest.class,
+		OctreeTest.class,
 		PathTest.class,
 		ParallaxTest.class,
 		ParticleControllerInfluencerSingleTest.class,
@@ -247,6 +253,7 @@ public class GdxTests {
 		StagePerformanceTest.class,
 		StageTest.class,
 		SuperKoalio.class,
+		SystemCursorTest.class,
 		TableLayoutTest.class,
 		TableTest.class,
 		TangentialAccelerationTest.class,
@@ -279,8 +286,10 @@ public class GdxTests {
 		TreeTest.class,
 		UISimpleTest.class,
 		UITest.class,
+		UtfFontTest.class,
 		VBOWithVAOPerformanceTest.class,
 		Vector2dTest.class,
+		VertexArrayTest.class,
 		VertexBufferObjectShaderTest.class,
 		VibratorTest.class,
 		ViewportTest1.class,

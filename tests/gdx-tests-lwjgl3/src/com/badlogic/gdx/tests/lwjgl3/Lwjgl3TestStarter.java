@@ -37,32 +37,39 @@ import com.badlogic.gdx.tests.utils.CommandLineOptions;
 import com.badlogic.gdx.tests.utils.GdxTestWrapper;
 import com.badlogic.gdx.tests.utils.GdxTests;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.SharedLibraryLoader;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class Lwjgl3TestStarter {
-	
+
 	static CommandLineOptions options;
 
-	/**
-	 * Runs libgdx tests.
+	/** Runs libgdx tests.
 	 * 
 	 * some options can be passed, see {@link CommandLineOptions}
 	 * 
-	 * @param argv command line arguments
-	 */
+	 * @param argv command line arguments */
 	public static void main (String[] argv) {
-		System.setProperty("java.awt.headless", "true");
-
 		options = new CommandLineOptions(argv);
-		
+
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setWindowedMode(640, 480);
 
-		if(options.gl30){
+		if (options.gl30) {
 			ShaderProgram.prependVertexCode = "#version 140\n#define varying out\n#define attribute in\n";
 			ShaderProgram.prependFragmentCode = "#version 140\n#define varying in\n#define texture2D texture\n#define gl_FragColor fragColor\nout vec4 fragColor;\n";
 
-			config.useOpenGL3(true, 3, 2);
+			config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL30, 3, 2);
+		}
+
+		if (options.angle) {
+			config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20, 0, 0);
+			// Use CPU sync if ANGLE is enabled on macOS, otherwise the framerate gets halfed
+			// by each new open window.
+			if (SharedLibraryLoader.isMac) {
+				config.useVsync(false);
+				config.setForegroundFPS(60);
+			}
 		}
 
 		if (options.startupTestName != null) {
@@ -82,6 +89,9 @@ public class Lwjgl3TestStarter {
 		TextButton lastClickedTestButton;
 
 		public void create () {
+			System.out.println("OpenGL renderer: " + Gdx.graphics.getGLVersion().getRendererString());
+			System.out.println("OpenGL vendor: " + Gdx.graphics.getGLVersion().getVendorString());
+
 			final Preferences prefs = Gdx.app.getPreferences("lwjgl3-tests");
 
 			stage = new Stage(new ScreenViewport());
@@ -116,6 +126,7 @@ public class Lwjgl3TestStarter {
 						winConfig.setWindowedMode(640, 480);
 						winConfig.setWindowPosition(((Lwjgl3Graphics)Gdx.graphics).getWindow().getPositionX() + 40,
 							((Lwjgl3Graphics)Gdx.graphics).getWindow().getPositionY() + 40);
+						winConfig.useVsync(false);
 						((Lwjgl3Application)Gdx.app).newWindow(new GdxTestWrapper(test, options.logGLErrors), winConfig);
 						System.out.println("Started test: " + testName);
 						prefs.putString("LastTest", testName);
@@ -138,8 +149,8 @@ public class Lwjgl3TestStarter {
 			if (lastClickedTestButton != null) {
 				lastClickedTestButton.setColor(Color.CYAN);
 				scroll.layout();
-				float scrollY = lastClickedTestButton.getY() + scroll.getScrollHeight() / 2 + lastClickedTestButton.getHeight() / 2 + tableSpace * 2
-					+ 20;
+				float scrollY = lastClickedTestButton.getY() + scroll.getScrollHeight() / 2 + lastClickedTestButton.getHeight() / 2
+					+ tableSpace * 2 + 20;
 				scroll.scrollTo(0, scrollY, 0, 0, false, false);
 
 				// Since ScrollPane takes some time for scrolling to a position, we just "fake" time

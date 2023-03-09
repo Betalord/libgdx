@@ -105,7 +105,7 @@ public class OggInputStream extends InputStream {
 	 *
 	 * @param input The input stream from which to read the OGG file
 	 * @param previousStream The stream instance to reuse buffers from, may be null */
-	OggInputStream (InputStream input, OggInputStream previousStream) {
+	public OggInputStream (InputStream input, OggInputStream previousStream) {
 		if (previousStream == null) {
 			convbuffer = new byte[convsize];
 			pcmBuffer = BufferUtils.createByteBuffer(4096 * 500);
@@ -371,7 +371,8 @@ public class OggInputStream extends InputStream {
 
 									int bytesToWrite = 2 * oggInfo.channels * bout;
 									if (bytesToWrite > pcmBuffer.remaining()) {
-										throw new GdxRuntimeException("Ogg block too big to be buffered: " + bytesToWrite + " :: " + pcmBuffer.remaining());
+										throw new GdxRuntimeException(
+											"Ogg block too big to be buffered: " + bytesToWrite + " :: " + pcmBuffer.remaining());
 									} else {
 										pcmBuffer.put(convbuffer, 0, bytesToWrite);
 									}
@@ -432,7 +433,7 @@ public class OggInputStream extends InputStream {
 
 	public int read () {
 		if (readIndex >= pcmBuffer.position()) {
-			((Buffer) pcmBuffer).clear();
+			((Buffer)pcmBuffer).clear();
 			readPCM();
 			readIndex = 0;
 		}

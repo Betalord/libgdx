@@ -15,15 +15,21 @@
  ******************************************************************************/
 
 subprojects {
-    apply plugin: "java"
+	apply plugin: "java"
 
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
-    sourceSets.main.java.srcDirs = ["src"]
-    sourceSets.main.resources.srcDirs = ["res"]
+	if(JavaVersion.current().isJava9Compatible()) {
+		compileJava {
+			options.release = versions.java
+		}
+	} else {
+		sourceCompatibility = versions.java
+		targetCompatibility = versions.java
+	}
+	sourceSets.main.java.srcDirs = ["src"]
+	sourceSets.main.resources.srcDirs = ["res"]
 
 
-    dependencies {
-        compile project(":gdx")
-    }
+	dependencies {
+		api project(":gdx")
+	}
 }

@@ -30,8 +30,6 @@ public class WebAudioAPIMusic implements Music {
 	// The audio graph used to control pan and volume for this piece of music
 	private final AudioControlGraph audioControlGraph;
 
-	private boolean isPlaying;
-
 	private OnCompletionListener onCompletionListener;
 
 	public WebAudioAPIMusic (JavaScriptObject audioContext, Audio audio, AudioControlGraphPool audioControlGraphPool) {
@@ -46,12 +44,11 @@ public class WebAudioAPIMusic implements Music {
 		audioControlGraph.setSource(audioSourceNode);
 	}
 
-	public void ended()
-	{
-		if(this.onCompletionListener != null) this.onCompletionListener.onCompletion(this);
+	public void ended () {
+		if (this.onCompletionListener != null) this.onCompletionListener.onCompletion(this);
 	}
 
-	public native JavaScriptObject createMediaElementAudioSourceNode(JavaScriptObject audioContext, JavaScriptObject audioElement) /*-{
+	public native JavaScriptObject createMediaElementAudioSourceNode (JavaScriptObject audioContext, JavaScriptObject audioElement) /*-{
 		var source = audioContext.createMediaElementSource(audioElement);
 		var self = this;
 		audioElement.addEventListener("ended", self.@com.badlogic.gdx.backends.gwt.webaudio.WebAudioAPIMusic::ended());
@@ -61,13 +58,11 @@ public class WebAudioAPIMusic implements Music {
 	@Override
 	public void play () {
 		audio.play();
-		isPlaying = true;
 	}
 
 	@Override
 	public void pause () {
 		audio.pause();
-		isPlaying = false;
 	}
 
 	@Override
@@ -78,7 +73,7 @@ public class WebAudioAPIMusic implements Music {
 
 	@Override
 	public boolean isPlaying () {
-		return isPlaying;
+		return !audio.isPaused();
 	}
 
 	@Override

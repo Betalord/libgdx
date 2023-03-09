@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
@@ -126,6 +127,7 @@ public class NetJavaImpl {
 	private final ThreadPoolExecutor executorService;
 	final ObjectMap<HttpRequest, HttpURLConnection> connections;
 	final ObjectMap<HttpRequest, HttpResponseListener> listeners;
+	final ObjectMap<HttpRequest, Future<?>> tasks;
 
 	public NetJavaImpl () {
 		this(Integer.MAX_VALUE);
@@ -133,22 +135,21 @@ public class NetJavaImpl {
 
 	public NetJavaImpl (int maxThreads) {
 		final boolean isCachedPool = maxThreads == Integer.MAX_VALUE;
-		executorService = new ThreadPoolExecutor(
-				isCachedPool ? 0 : maxThreads, maxThreads,
-				60L, TimeUnit.SECONDS,
-				isCachedPool ? new SynchronousQueue<Runnable>() : new LinkedBlockingQueue<Runnable>(),
-				new ThreadFactory() {
-					AtomicInteger threadID = new AtomicInteger();
-					@Override
-					public Thread newThread(Runnable r) {
-						Thread thread = new Thread(r, "NetThread" + threadID.getAndIncrement());
-						thread.setDaemon(true);
-						return thread;
-					}
-				});
+		executorService = new ThreadPoolExecutor(isCachedPool ? 0 : maxThreads, maxThreads, 60L, TimeUnit.SECONDS,
+			isCachedPool ? new SynchronousQueue<Runnable>() : new LinkedBlockingQueue<Runnable>(), new ThreadFactory() {
+				AtomicInteger threadID = new AtomicInteger();
+
+				@Override
+				public Thread newThread (Runnable r) {
+					Thread thread = new Thread(r, "NetThread" + threadID.getAndIncrement());
+					thread.setDaemon(true);
+					return thread;
+				}
+			});
 		executorService.allowCoreThreadTimeOut(!isCachedPool);
 		connections = new ObjectMap<HttpRequest, HttpURLConnection>();
 		listeners = new ObjectMap<HttpRequest, HttpResponseListener>();
+		tasks = new ObjectMap<HttpRequest, Future<?>>();
 	}
 
 	public void sendHttpRequest (final HttpRequest httpRequest, final HttpResponseListener httpResponseListener) {
@@ -163,9 +164,8 @@ public class NetJavaImpl {
 
 			final boolean doInput = !method.equalsIgnoreCase(HttpMethods.HEAD);
 			// should be enabled to upload data.
-			final boolean doingOutPut = method.equalsIgnoreCase(HttpMethods.POST)
-					|| method.equalsIgnoreCase(HttpMethods.PUT)
-					|| method.equalsIgnoreCase(HttpMethods.PATCH);
+			final boolean doingOutPut = method.equalsIgnoreCase(HttpMethods.POST) || method.equalsIgnoreCase(HttpMethods.PUT)
+				|| method.equalsIgnoreCase(HttpMethods.PATCH);
 
 			if (method.equalsIgnoreCase(HttpMethods.GET) || method.equalsIgnoreCase(HttpMethods.HEAD)) {
 				String queryString = "";
@@ -192,9 +192,9 @@ public class NetJavaImpl {
 			connection.setConnectTimeout(httpRequest.getTimeOut());
 			connection.setReadTimeout(httpRequest.getTimeOut());
 
-			executorService.submit(new Runnable() {
+			tasks.put(httpRequest, executorService.submit(new Runnable() {
 				@Override
-				public void run() {
+				public void run () {
 					try {
 						// Set the content for POST and PUT (GET has the information embedded in the URL)
 						if (doingOutPut) {
@@ -242,7 +242,7 @@ public class NetJavaImpl {
 						}
 					}
 				}
-			});
+			}));
 		} catch (Exception e) {
 			try {
 				httpResponseListener.failed(e);
@@ -258,13 +258,23 @@ public class NetJavaImpl {
 
 		if (httpResponseListener != null) {
 			httpResponseListener.cancelled();
+			cancelTask(httpRequest);
 			removeFromConnectionsAndListeners(httpRequest);
+		}
+	}
+
+	private void cancelTask (HttpRequest httpRequest) {
+		Future<?> task = tasks.get(httpRequest);
+
+		if (task != null) {
+			task.cancel(false);
 		}
 	}
 
 	synchronized void removeFromConnectionsAndListeners (final HttpRequest httpRequest) {
 		connections.remove(httpRequest);
 		listeners.remove(httpRequest);
+		tasks.remove(httpRequest);
 	}
 
 	synchronized void putIntoConnectionsAndListeners (final HttpRequest httpRequest,

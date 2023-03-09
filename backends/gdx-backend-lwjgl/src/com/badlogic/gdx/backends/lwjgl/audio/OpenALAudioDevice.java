@@ -89,30 +89,22 @@ public class OpenALAudioDevice implements AudioDevice {
 			if (sourceID == -1) return;
 			if (buffers == null) {
 				buffers = BufferUtils.createIntBuffer(bufferCount);
+				alGetError();
 				alGenBuffers(buffers);
 				if (alGetError() != AL_NO_ERROR) throw new GdxRuntimeException("Unabe to allocate audio buffers.");
 			}
 			alSourcei(sourceID, AL_LOOPING, AL_FALSE);
 			alSourcef(sourceID, AL_GAIN, volume);
 			// Fill initial buffers.
-			int queuedBuffers = 0;
 			for (int i = 0; i < bufferCount; i++) {
 				int bufferID = buffers.get(i);
 				int written = Math.min(bufferSize, length);
-				((Buffer) tempBuffer).clear();
-				((Buffer) tempBuffer.put(data, offset, written)).flip();
+				((Buffer)tempBuffer).clear();
+				((Buffer)tempBuffer.put(data, offset, written)).flip();
 				alBufferData(bufferID, format, tempBuffer, sampleRate);
 				alSourceQueueBuffers(sourceID, bufferID);
 				length -= written;
 				offset += written;
-				queuedBuffers++;
-			}
-			// Queue rest of buffers, empty.
-			((Buffer) tempBuffer).clear().flip();
-			for (int i = queuedBuffers; i < bufferCount; i++) {
-				int bufferID = buffers.get(i);
-				alBufferData(bufferID, format, tempBuffer, sampleRate);
-				alSourceQueueBuffers(sourceID, bufferID);
 			}
 			alSourcePlay(sourceID);
 			isPlaying = true;
@@ -137,8 +129,8 @@ public class OpenALAudioDevice implements AudioDevice {
 				if (bufferID == AL_INVALID_VALUE) break;
 				renderedSeconds += secondsPerBuffer;
 
-				((Buffer) tempBuffer).clear();
-				((Buffer) tempBuffer.put(data, offset, written)).flip();
+				((Buffer)tempBuffer).clear();
+				((Buffer)tempBuffer.put(data, offset, written)).flip();
 				alBufferData(bufferID, format, tempBuffer, sampleRate);
 
 				alSourceQueueBuffers(sourceID, bufferID);
@@ -211,5 +203,15 @@ public class OpenALAudioDevice implements AudioDevice {
 
 	public int getLatency () {
 		return (int)(secondsPerBuffer * bufferCount * 1000);
+	}
+
+	@Override
+	public void pause () {
+		// A buffer underflow will cause the source to stop.
+	}
+
+	@Override
+	public void resume () {
+		// Automatically resumes when samples are written
 	}
 }

@@ -56,7 +56,7 @@ public abstract class AbstractTestWrapper extends GdxTest {
 
 		ui = new Stage(new ExtendViewport(480, 320));
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
-		font = new BitmapFont(Gdx.files.internal("data/arial-15.fnt"), false);
+		font = new BitmapFont(Gdx.files.internal("data/lsans-15.fnt"), false);
 		container = new Table();
 		ui.addActor(container);
 		container.debug();
@@ -87,8 +87,8 @@ public abstract class AbstractTestWrapper extends GdxTest {
 			table.add(button).expandX().fillX();
 		}
 		container.row();
-		container.add(new Label("Click on a test to start it, press ESC or tap the upper left corner to close it.", new LabelStyle(font, Color.WHITE))).pad(5, 5,
-			5, 5);
+		container.add(new Label("Click on a test to start it, press ESC or tap the upper left corner to close it.",
+			new LabelStyle(font, Color.WHITE))).pad(5, 5, 5, 5);
 
 		Gdx.input = new InputWrapper(Gdx.input) {
 			@Override
@@ -414,8 +414,9 @@ public abstract class AbstractTestWrapper extends GdxTest {
 
 	protected interface Instancer {
 		GdxTest instance ();
-		String getSimpleName();
+
+		String getSimpleName ();
 	}
 
-	protected abstract Instancer[] getTestList();
+	protected abstract Instancer[] getTestList ();
 }

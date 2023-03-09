@@ -47,8 +47,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.backends.iosrobovm.objectal.OALAudioSession;
-import com.badlogic.gdx.backends.iosrobovm.objectal.OALSimpleAudio;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
 
@@ -155,7 +153,7 @@ public class IOSApplication implements Application {
 		return true;
 	}
 
-	protected Files createFiles() {
+	protected Files createFiles () {
 		return new IOSFiles();
 	}
 
@@ -163,25 +161,25 @@ public class IOSApplication implements Application {
 		return new OALIOSAudio(config);
 	}
 
-	protected IOSGraphics createGraphics() {
-		 return new IOSGraphics(this, config, input, config.useGL30);
+	protected IOSGraphics createGraphics () {
+		return new IOSGraphics(this, config, input, config.useGL30);
 	}
 
 	protected IOSUIViewController createUIViewController (IOSGraphics graphics) {
 		return new IOSUIViewController(this, graphics);
 	}
 
-	protected IOSInput createInput() {
-		 return new DefaultIOSInput(this);
+	protected IOSInput createInput () {
+		return new DefaultIOSInput(this);
 	}
 
 	/** Returns device ppi using a best guess approach when device is unknown. Overwrite to customize strategy. */
-	protected int guessUnknownPpi() {
+	protected int guessUnknownPpi () {
 		int ppi;
 		if (UIDevice.getCurrentDevice().getUserInterfaceIdiom() == UIUserInterfaceIdiom.Pad)
-			ppi = 132 * (int) pixelsPerPoint;
+			ppi = 132 * (int)pixelsPerPoint;
 		else
-			ppi = 164 * (int) pixelsPerPoint;
+			ppi = 164 * (int)pixelsPerPoint;
 		error("IOSApplication", "Device PPI unknown. PPI value has been guessed to " + ppi + " but may be wrong");
 		return ppi;
 	}
@@ -224,7 +222,7 @@ public class IOSApplication implements Application {
 		final int backBufferHeight = (int)Math.round(screenHeight * pixelsPerPoint);
 
 		debug("IOSApplication", "Computed bounds are x=" + offsetX + " y=" + offsetY + " w=" + width + " h=" + height + " bbW= "
-					+ backBufferWidth + " bbH= " + backBufferHeight);
+			+ backBufferWidth + " bbH= " + backBufferHeight);
 
 		return lastScreenBounds = new IOSScreenBounds(offsetX, offsetY, width, height, backBufferWidth, backBufferHeight);
 	}
@@ -239,33 +237,18 @@ public class IOSApplication implements Application {
 
 	final void didBecomeActive (UIApplication uiApp) {
 		Gdx.app.debug("IOSApplication", "resumed");
-		// workaround for ObjectAL crash problem
-		// see: https://groups.google.com/forum/?fromgroups=#!topic/objectal-for-iphone/ubRWltp_i1Q
-		OALAudioSession audioSession = OALAudioSession.sharedInstance();
-		if (audioSession != null) {
-			audioSession.forceEndInterruption();
-		}
-		if (config.allowIpod) {
-			OALSimpleAudio audio = OALSimpleAudio.sharedInstance();
-			if (audio != null) {
-				audio.setUseHardwareIfAvailable(false);
-			}
-		}
+		audio.didBecomeActive();
 		graphics.makeCurrent();
 		graphics.resume();
 	}
 
 	final void willEnterForeground (UIApplication uiApp) {
-		// workaround for ObjectAL crash problem
-		// see: https://groups.google.com/forum/?fromgroups=#!topic/objectal-for-iphone/ubRWltp_i1Q
-		OALAudioSession audioSession = OALAudioSession.sharedInstance();
-		if (audioSession != null) {
-			audioSession.forceEndInterruption();
-		}
+		audio.willEnterForeground();
 	}
 
 	final void willResignActive (UIApplication uiApp) {
 		Gdx.app.debug("IOSApplication", "paused");
+		audio.willResignActive();
 		graphics.makeCurrent();
 		graphics.pause();
 		Gdx.gl.glFinish();
@@ -273,6 +256,7 @@ public class IOSApplication implements Application {
 
 	final void willTerminate (UIApplication uiApp) {
 		Gdx.app.debug("IOSApplication", "disposed");
+		audio.willTerminate();
 		graphics.makeCurrent();
 		Array<LifecycleListener> listeners = lifecycleListeners;
 		synchronized (listeners) {
@@ -371,7 +355,7 @@ public class IOSApplication implements Application {
 
 	@Override
 	public int getVersion () {
-		return (int) NSProcessInfo.getSharedProcessInfo().getOperatingSystemVersion().getMajorVersion();
+		return (int)NSProcessInfo.getSharedProcessInfo().getOperatingSystemVersion().getMajorVersion();
 	}
 
 	@Override
@@ -468,7 +452,7 @@ public class IOSApplication implements Application {
 		}
 	}
 
-	/** Add a listener to handle events from the libgdx root view controller
+	/** Add a listener to handle events from the libGDX root view controller
 	 * @param listener The {#link IOSViewControllerListener} to add */
 	public void addViewControllerListener (IOSViewControllerListener listener) {
 		viewControllerListener = listener;

@@ -83,7 +83,7 @@ public class GwtTest extends GdxTest {
 		sprite.setSize(64, 64);
 		sprite.setOrigin(32, 32);
 
-		font = new BitmapFont(Gdx.files.internal("data/arial-15.fnt"), false);
+		font = new BitmapFont(Gdx.files.internal("data/lsans-15.fnt"), false);
 		cache = font.newFontCache();
 		cache.setColor(Color.RED);
 		cache.setText("This is a Test", 0, 0);
@@ -107,8 +107,9 @@ public class GwtTest extends GdxTest {
 			sprite.setPosition(position.x, position.y);
 			sprite.draw(batch);
 		}
-		font.draw(batch, "fps:" + Gdx.graphics.getFramesPerSecond() + ", delta: " + Gdx.graphics.getDeltaTime() + ", #sprites: "
-			+ numSprites, 0, 30);
+		font.draw(batch,
+			"fps:" + Gdx.graphics.getFramesPerSecond() + ", delta: " + Gdx.graphics.getDeltaTime() + ", #sprites: " + numSprites, 0,
+			30);
 		cache.setPosition(200, 200);
 		cache.draw(batch);
 		batch.end();

@@ -352,6 +352,7 @@
 		<include name="math/MathUtils.java"/>
 		<include name="math/Matrix3.java"/>
 		<include name="math/Matrix4.java"/> <!-- Emulated: JNI -->
+		<include name="math/Octree.java"/>
 		<include name="math/Path.java"/>
 		<include name="math/Plane.java"/>
 		<include name="math/Polygon.java"/>
@@ -518,6 +519,6 @@
 	<extend-configuration-property name="gdx.files.classpath" value="com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl" />
 	<extend-configuration-property name="gdx.files.classpath" value="com/badlogic/gdx/graphics/g3d/shaders/depth.fragment.glsl" />
 	<extend-configuration-property name="gdx.files.classpath" value="com/badlogic/gdx/graphics/g3d/shaders/depth.vertex.glsl" />
-	<extend-configuration-property name="gdx.files.classpath" value="com/badlogic/gdx/utils/arial-15.fnt" />
-	<extend-configuration-property name="gdx.files.classpath" value="com/badlogic/gdx/utils/arial-15.png" />
+	<extend-configuration-property name="gdx.files.classpath" value="com/badlogic/gdx/utils/lsans-15.fnt" />
+	<extend-configuration-property name="gdx.files.classpath" value="com/badlogic/gdx/utils/lsans-15.png" />
 </module>

@@ -458,9 +458,11 @@ public class BitmapFont implements Disposable {
 		/** The amount to add to the glyph X position when drawing a cursor between glyphs. This field is not set by the BMFont
 		 * file, it needs to be set manually depending on how the glyphs are rendered on the backing textures. */
 		public float cursorX;
-		
-		/* Here we keep original values for those attributes (as calculated in load() method), that get modified in setScale()
-		 * method. We need it due to a bug described here: https://github.com/libgdx/libgdx/issues/7100. */
+
+		/*
+		 * Here we keep original values for those attributes (as calculated in load() method), that get modified in setScale()
+		 * method. We need it due to a bug described here: https://github.com/libgdx/libgdx/issues/7100.
+		 */
 		public float originalLineHeight;
 		public float originalSpaceXadvance;
 		public float originalXHeight;
@@ -472,7 +474,7 @@ public class BitmapFont implements Disposable {
 		public float originalPadRight;
 		public float originalPadTop;
 		public float originalPadBottom;
-		
+
 		public final Glyph[][] glyphs = new Glyph[PAGES][];
 		/** The glyph to display for characters not in the font. May be null. */
 		public Glyph missingGlyph;
@@ -726,7 +728,7 @@ public class BitmapFont implements Disposable {
 					this.spaceXadvance = overrideSpaceXAdvance;
 					this.xHeight = overrideXHeight;
 				}
-				
+
 				originalLineHeight = lineHeight;
 				originalSpaceXadvance = spaceXadvance;
 				originalXHeight = xHeight;

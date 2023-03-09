@@ -458,7 +458,21 @@ public class BitmapFont implements Disposable {
 		/** The amount to add to the glyph X position when drawing a cursor between glyphs. This field is not set by the BMFont
 		 * file, it needs to be set manually depending on how the glyphs are rendered on the backing textures. */
 		public float cursorX;
-
+		
+		/* Here we keep original values for those attributes (as calculated in load() method), that get modified in setScale()
+		 * method. We need it due to a bug described here: https://github.com/libgdx/libgdx/issues/7100. */
+		public float originalLineHeight;
+		public float originalSpaceXadvance;
+		public float originalXHeight;
+		public float originalCapHeight;
+		public float originalAscent;
+		public float originalDescent;
+		public float originalDown;
+		public float originalPadLeft;
+		public float originalPadRight;
+		public float originalPadTop;
+		public float originalPadBottom;
+		
 		public final Glyph[][] glyphs = new Glyph[PAGES][];
 		/** The glyph to display for characters not in the font. May be null. */
 		public Glyph missingGlyph;
@@ -712,7 +726,18 @@ public class BitmapFont implements Disposable {
 					this.spaceXadvance = overrideSpaceXAdvance;
 					this.xHeight = overrideXHeight;
 				}
-
+				
+				originalLineHeight = lineHeight;
+				originalSpaceXadvance = spaceXadvance;
+				originalXHeight = xHeight;
+				originalCapHeight = capHeight;
+				originalAscent = ascent;
+				originalDescent = descent;
+				originalDown = down;
+				originalPadLeft = padLeft;
+				originalPadRight = padRight;
+				originalPadTop = padTop;
+				originalPadBottom = padBottom;
 			} catch (Exception ex) {
 				throw new GdxRuntimeException("Error loading font file: " + fontFile, ex);
 			} finally {
@@ -918,21 +943,19 @@ public class BitmapFont implements Disposable {
 		public void setScale (float scaleX, float scaleY) {
 			if (scaleX == 0) throw new IllegalArgumentException("scaleX cannot be 0.");
 			if (scaleY == 0) throw new IllegalArgumentException("scaleY cannot be 0.");
-			float x = scaleX / this.scaleX;
-			float y = scaleY / this.scaleY;
-			lineHeight *= y;
-			spaceXadvance *= x;
-			xHeight *= y;
-			capHeight *= y;
-			ascent *= y;
-			descent *= y;
-			down *= y;
-			padLeft *= x;
-			padRight *= x;
-			padTop *= y;
-			padBottom *= y;
 			this.scaleX = scaleX;
 			this.scaleY = scaleY;
+			lineHeight = originalLineHeight * scaleY;
+			spaceXadvance = originalSpaceXadvance * scaleX;
+			xHeight = originalXHeight * scaleY;
+			capHeight = originalCapHeight * scaleY;
+			ascent = originalAscent * scaleY;
+			descent = originalDescent * scaleX;
+			down = originalDown * scaleY;
+			padLeft = originalPadLeft * scaleX;
+			padRight = originalPadRight * scaleX;
+			padTop = originalPadTop * scaleY;
+			padBottom = originalPadBottom * scaleY;
 		}
 
 		/** Scales the font by the specified amount in both directions.

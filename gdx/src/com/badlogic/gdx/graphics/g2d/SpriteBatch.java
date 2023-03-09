@@ -1041,11 +1041,7 @@ public class SpriteBatch implements Batch {
 
 	public void restoreBlendFunction () {
 		/*
-		 * Correct order:
-		 * sRGB
-		 * dRGB
-		 * sA
-		 * dA
+		 * Correct order: sRGB dRGB sA dA
 		 */
 		setBlendFunctionSeparate(blendFuncBackup.pop(), blendFuncBackup.pop(), blendFuncBackup.pop(), blendFuncBackup.pop());
 	}
@@ -1125,7 +1121,7 @@ public class SpriteBatch implements Batch {
 	}
 
 	/** Returns custom shader if set, or null otherwise. */
-	public ShaderProgram getCustomShader() {
+	public ShaderProgram getCustomShader () {
 		return customShader;
 	}
 
